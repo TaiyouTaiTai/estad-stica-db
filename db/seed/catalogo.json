@@ -1,0 +1,149 @@
+{
+  "_comentario": "Contenido didáctico semilla. Un script de Node lo carga en las tablas definicion_estadistico, simbolo_formula, estadistico_escala y glosario. Versionado en Git para llevar historial del contenido educativo.",
+
+  "estadisticos": [
+    {
+      "clave": "media",
+      "nombre": "Media aritmética",
+      "categoria": "tendencia_central",
+      "formula_latex": "\\bar{x} = \\frac{\\sum_{i=1}^{n} x_i}{n}",
+      "formula_texto": "media = (suma de todos los valores) / (cantidad de valores)",
+      "descripcion": "El promedio: suma todos los valores y los reparte en partes iguales.",
+      "cuando_usar": "Datos numéricos sin valores extremos que distorsionen el promedio.",
+      "malinterpretacion": "Un solo valor muy grande o muy chico la 'jala'. Con datos con extremos, la mediana representa mejor.",
+      "requiere_ordenado": false,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "\\bar{x}", "significado": "la media (el resultado)", "orden": 1 },
+        { "simbolo_latex": "\\sum x_i", "significado": "la suma de todos los valores", "orden": 2 },
+        { "simbolo_latex": "n", "significado": "la cantidad de valores", "orden": 3 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "No se puede promediar categorías sin orden (ej. ciudades)." },
+        { "escala": "ordinal", "permitido": false, "motivo": "El orden no garantiza distancias iguales entre valores." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Las distancias son constantes; el promedio tiene sentido." },
+        { "escala": "razon", "permitido": true, "motivo": "Tiene cero real y distancias constantes." }
+      ]
+    },
+    {
+      "clave": "mediana",
+      "nombre": "Mediana",
+      "categoria": "tendencia_central",
+      "formula_latex": "\\tilde{x} = \\begin{cases} x_{(n+1)/2} & n \\text{ impar} \\\\ \\frac{x_{n/2} + x_{n/2+1}}{2} & n \\text{ par} \\end{cases}",
+      "formula_texto": "el valor del medio cuando los datos están ordenados",
+      "descripcion": "El valor que queda justo en el centro al ordenar los datos de menor a mayor.",
+      "cuando_usar": "Cuando hay valores extremos; representa el centro sin dejarse afectar por ellos.",
+      "malinterpretacion": "No usa el valor de los datos, solo su posición: no 'siente' qué tan grandes son los extremos.",
+      "requiere_ordenado": true,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "\\tilde{x}", "significado": "la mediana", "orden": 1 },
+        { "simbolo_latex": "n", "significado": "la cantidad de valores", "orden": 2 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "Sin orden no existe un 'centro'." },
+        { "escala": "ordinal", "permitido": true, "motivo": "Basta con poder ordenar los datos." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Se puede ordenar y promediar el par central." },
+        { "escala": "razon", "permitido": true, "motivo": "Se puede ordenar y promediar el par central." }
+      ]
+    },
+    {
+      "clave": "moda",
+      "nombre": "Moda",
+      "categoria": "tendencia_central",
+      "formula_latex": "Mo = \\text{valor con mayor frecuencia}",
+      "formula_texto": "el valor que más se repite",
+      "descripcion": "El dato que aparece con mayor frecuencia. Puede haber más de una.",
+      "cuando_usar": "El único centro que sirve para datos de categorías (nominales).",
+      "malinterpretacion": "Puede no existir (todos distintos) o haber varias; no siempre es 'el centro'.",
+      "requiere_ordenado": false,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "Mo", "significado": "la moda", "orden": 1 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": true, "motivo": "Se puede contar cuál categoría se repite más." },
+        { "escala": "ordinal", "permitido": true, "motivo": "Se puede contar frecuencias." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Se puede contar frecuencias." },
+        { "escala": "razon", "permitido": true, "motivo": "Se puede contar frecuencias." }
+      ]
+    },
+    {
+      "clave": "rango",
+      "nombre": "Rango",
+      "categoria": "dispersion",
+      "formula_latex": "R = x_{max} - x_{min}",
+      "formula_texto": "rango = valor máximo - valor mínimo",
+      "descripcion": "Qué tan separados están el dato más grande y el más pequeño.",
+      "cuando_usar": "Para una idea rápida de la dispersión total.",
+      "malinterpretacion": "Solo mira los dos extremos; ignora todo lo que hay en medio.",
+      "requiere_ordenado": false,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "R", "significado": "el rango", "orden": 1 },
+        { "simbolo_latex": "x_{max}", "significado": "el valor más grande", "orden": 2 },
+        { "simbolo_latex": "x_{min}", "significado": "el valor más pequeño", "orden": 3 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "No hay 'máximo' ni 'mínimo' en categorías sin orden." },
+        { "escala": "ordinal", "permitido": false, "motivo": "No hay distancias definidas para restar." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Se pueden restar valores." },
+        { "escala": "razon", "permitido": true, "motivo": "Se pueden restar valores." }
+      ]
+    },
+    {
+      "clave": "cuartil",
+      "nombre": "Cuartiles",
+      "categoria": "posicion",
+      "formula_latex": "Q_k = \\text{valor en la posición } \\frac{k(n+1)}{4}",
+      "formula_texto": "dividen los datos ordenados en 4 partes iguales (Q1, Q2, Q3)",
+      "descripcion": "Cortan los datos ordenados en cuatro grupos con la misma cantidad de datos cada uno.",
+      "cuando_usar": "Para ver la posición de un dato y detectar valores atípicos (junto con el diagrama de caja).",
+      "malinterpretacion": "Existen varios métodos de cálculo; distintos programas pueden dar valores ligeramente distintos.",
+      "requiere_ordenado": true,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "Q_k", "significado": "el cuartil k (1, 2 o 3)", "orden": 1 },
+        { "simbolo_latex": "n", "significado": "la cantidad de valores", "orden": 2 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "Sin orden no hay posiciones." },
+        { "escala": "ordinal", "permitido": true, "motivo": "Basta con ordenar los datos." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Se puede ordenar e interpolar." },
+        { "escala": "razon", "permitido": true, "motivo": "Se puede ordenar e interpolar." }
+      ]
+    },
+    {
+      "clave": "desviacion_estandar",
+      "nombre": "Desviación estándar",
+      "categoria": "dispersion",
+      "formula_latex": "s = \\sqrt{\\frac{\\sum_{i=1}^{n}(x_i - \\bar{x})^2}{n-1}}",
+      "formula_texto": "raíz del promedio de las distancias (al cuadrado) de cada dato a la media",
+      "descripcion": "En promedio, qué tan lejos están los datos de la media. Mientras más grande, más dispersos.",
+      "cuando_usar": "Datos numéricos para medir qué tan 'apretados' o 'sueltos' están alrededor del promedio.",
+      "malinterpretacion": "Se ve afectada por valores extremos, igual que la media. Usa n-1 para muestras (no n).",
+      "requiere_ordenado": false,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "s", "significado": "la desviación estándar (muestral)", "orden": 1 },
+        { "simbolo_latex": "x_i", "significado": "cada valor", "orden": 2 },
+        { "simbolo_latex": "\\bar{x}", "significado": "la media", "orden": 3 },
+        { "simbolo_latex": "n", "significado": "la cantidad de valores", "orden": 4 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "No se pueden calcular distancias entre categorías." },
+        { "escala": "ordinal", "permitido": false, "motivo": "Las distancias entre posiciones no son constantes." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Distancias constantes: la variabilidad tiene sentido." },
+        { "escala": "razon", "permitido": true, "motivo": "Distancias constantes y cero real." }
+      ]
+    }
+  ],
+
+  "glosario": [
+    { "termino": "Población", "definicion": "El conjunto completo de elementos que se quiere estudiar.", "ejemplo": "Todos los estudiantes de una universidad." },
+    { "termino": "Muestra", "definicion": "Una parte de la población que se analiza para sacar conclusiones.", "ejemplo": "100 estudiantes elegidos al azar." },
+    { "termino": "Frecuencia", "definicion": "Cuántas veces aparece un valor en los datos.", "ejemplo": "El 20 aparece 3 veces → frecuencia 3." },
+    { "termino": "Valor atípico", "definicion": "Un dato que se aleja mucho del resto.", "ejemplo": "Edades 20,21,22,90 → el 90 es atípico." },
+    { "termino": "Escala de medición", "definicion": "El tipo de información que da una variable (nominal, ordinal, intervalo, razón); determina qué cálculos tienen sentido.", "ejemplo": "'Ciudad' es nominal; 'temperatura' es intervalo." }
+  ]
+}

@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# Variables de entorno y secretos (NUNCA subir)
+.env
+.env.local
+.env.*.local
+
+# Datos reales / respaldos de DB (solo versionamos el schema, no los datos)
+*.sql.bak
+dump*.sql
+db/data/
+
+# Build
+dist/
+build/
+.vite/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo / editor
+.DS_Store
+.vscode/
+.idea/
