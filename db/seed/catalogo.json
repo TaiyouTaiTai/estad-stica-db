@@ -136,6 +136,120 @@
         { "escala": "intervalo", "permitido": true, "motivo": "Distancias constantes: la variabilidad tiene sentido." },
         { "escala": "razon", "permitido": true, "motivo": "Distancias constantes y cero real." }
       ]
+    },
+    {
+      "clave": "varianza",
+      "nombre": "Varianza",
+      "categoria": "dispersion",
+      "formula_latex": "s^2 = \\frac{\\sum_{i=1}^{n}(x_i - \\bar{x})^2}{n-1}",
+      "formula_texto": "promedio de las distancias al cuadrado de cada dato a la media",
+      "descripcion": "Mide qué tan dispersos están los datos alrededor de la media. Es la desviación estándar al cuadrado.",
+      "cuando_usar": "Como paso previo a la desviación estándar, o en fórmulas estadísticas más avanzadas.",
+      "malinterpretacion": "Está en unidades al cuadrado (ej. cm²), por eso es difícil de interpretar directamente; para eso existe la desviación estándar. Usa n-1 para muestras.",
+      "requiere_ordenado": false,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "s^2", "significado": "la varianza (muestral)", "orden": 1 },
+        { "simbolo_latex": "x_i", "significado": "cada valor", "orden": 2 },
+        { "simbolo_latex": "\\bar{x}", "significado": "la media", "orden": 3 },
+        { "simbolo_latex": "n", "significado": "la cantidad de valores", "orden": 4 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "No se pueden calcular distancias entre categorías." },
+        { "escala": "ordinal", "permitido": false, "motivo": "Las distancias entre posiciones no son constantes." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Distancias constantes: la variabilidad tiene sentido." },
+        { "escala": "razon", "permitido": true, "motivo": "Distancias constantes y cero real." }
+      ]
+    },
+    {
+      "clave": "coeficiente_variacion",
+      "nombre": "Coeficiente de variación",
+      "categoria": "dispersion",
+      "formula_latex": "CV = \\frac{s}{\\bar{x}} \\times 100",
+      "formula_texto": "desviación estándar dividida entre la media, en porcentaje",
+      "descripcion": "Qué tan grande es la dispersión comparada con la media, en %. Permite comparar la variación de datos con unidades o tamaños distintos.",
+      "cuando_usar": "Para comparar qué conjunto de datos es más variable, aunque estén en unidades diferentes (ej. peso en kg vs. estatura en cm).",
+      "malinterpretacion": "Solo tiene sentido con un cero real y media positiva: con temperaturas en °C, por ejemplo, da resultados sin sentido.",
+      "requiere_ordenado": false,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "CV", "significado": "el coeficiente de variación (%)", "orden": 1 },
+        { "simbolo_latex": "s", "significado": "la desviación estándar", "orden": 2 },
+        { "simbolo_latex": "\\bar{x}", "significado": "la media", "orden": 3 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "No hay media ni desviación en categorías." },
+        { "escala": "ordinal", "permitido": false, "motivo": "Las distancias entre posiciones no son constantes." },
+        { "escala": "intervalo", "permitido": false, "motivo": "Sin cero real, dividir entre la media no tiene sentido (ej. 0 °C no es 'ausencia de temperatura')." },
+        { "escala": "razon", "permitido": true, "motivo": "Tiene cero real: la proporción entre desviación y media es interpretable." }
+      ]
+    },
+    {
+      "clave": "decil",
+      "nombre": "Deciles",
+      "categoria": "posicion",
+      "formula_latex": "D_k = \\text{valor en la posición } \\frac{k(n+1)}{10}",
+      "formula_texto": "dividen los datos ordenados en 10 partes iguales (D1 a D9)",
+      "descripcion": "Cortan los datos ordenados en diez grupos con la misma cantidad de datos cada uno.",
+      "cuando_usar": "Para ubicar un dato dentro del grupo con más detalle que los cuartiles (ej. 'está en el 10% más alto').",
+      "malinterpretacion": "Igual que los cuartiles, existen varios métodos de cálculo que dan valores ligeramente distintos.",
+      "requiere_ordenado": true,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "D_k", "significado": "el decil k (1 a 9)", "orden": 1 },
+        { "simbolo_latex": "n", "significado": "la cantidad de valores", "orden": 2 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "Sin orden no hay posiciones." },
+        { "escala": "ordinal", "permitido": true, "motivo": "Basta con ordenar los datos." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Se puede ordenar e interpolar." },
+        { "escala": "razon", "permitido": true, "motivo": "Se puede ordenar e interpolar." }
+      ]
+    },
+    {
+      "clave": "percentil",
+      "nombre": "Percentiles",
+      "categoria": "posicion",
+      "formula_latex": "P_k = \\text{valor en la posición } \\frac{k(n+1)}{100}",
+      "formula_texto": "dividen los datos ordenados en 100 partes iguales (P1 a P99)",
+      "descripcion": "El percentil k es el valor que deja por debajo al k% de los datos.",
+      "cuando_usar": "Para decir qué porcentaje de los datos queda por debajo de un valor (ej. 'estás en el percentil 90 de estatura').",
+      "malinterpretacion": "El percentil 90 no significa 'sacó 90 de 100': significa que supera al 90% de los datos.",
+      "requiere_ordenado": true,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "P_k", "significado": "el percentil k (1 a 99)", "orden": 1 },
+        { "simbolo_latex": "n", "significado": "la cantidad de valores", "orden": 2 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "Sin orden no hay posiciones." },
+        { "escala": "ordinal", "permitido": true, "motivo": "Basta con ordenar los datos." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Se puede ordenar e interpolar." },
+        { "escala": "razon", "permitido": true, "motivo": "Se puede ordenar e interpolar." }
+      ]
+    },
+    {
+      "clave": "resumen_caja",
+      "nombre": "Resumen de cinco números (diagrama de caja)",
+      "categoria": "posicion",
+      "formula_latex": "RIQ = Q_3 - Q_1, \\quad \\text{atípico si } x < Q_1 - 1.5 \\cdot RIQ \\text{ o } x > Q_3 + 1.5 \\cdot RIQ",
+      "formula_texto": "mínimo, Q1, mediana, Q3 y máximo, más los valores atípicos",
+      "descripcion": "Resume los datos en cinco números y detecta valores atípicos. Es lo que dibuja el diagrama de caja.",
+      "cuando_usar": "Para ver de un vistazo el centro, la dispersión, la simetría y los datos raros; y para comparar grupos.",
+      "malinterpretacion": "Un valor atípico no es necesariamente un error: puede ser un dato real e importante. Revísalo antes de eliminarlo.",
+      "requiere_ordenado": true,
+      "requiere_agrupado": false,
+      "simbolos": [
+        { "simbolo_latex": "Q_1", "significado": "primer cuartil (25% de los datos por debajo)", "orden": 1 },
+        { "simbolo_latex": "Q_3", "significado": "tercer cuartil (75% de los datos por debajo)", "orden": 2 },
+        { "simbolo_latex": "RIQ", "significado": "rango intercuartílico: el ancho de la caja", "orden": 3 }
+      ],
+      "escalas": [
+        { "escala": "nominal", "permitido": false, "motivo": "Sin orden no hay cuartiles." },
+        { "escala": "ordinal", "permitido": false, "motivo": "Detectar atípicos requiere restar y multiplicar distancias." },
+        { "escala": "intervalo", "permitido": true, "motivo": "Se pueden calcular cuartiles y distancias." },
+        { "escala": "razon", "permitido": true, "motivo": "Se pueden calcular cuartiles y distancias." }
+      ]
     }
   ],
 

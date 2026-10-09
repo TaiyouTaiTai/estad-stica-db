@@ -55,3 +55,48 @@ Formato: cada decisión tiene fecha, contexto, decisión y consecuencias.
 - **Decisión:** `db/migrations/` como historial (fuente de verdad) + `db/schema.sql`
   como foto actual. Nunca se editan migraciones ya subidas.
 - **Consecuencias:** El `git log` documenta la evolución de la DB.
+
+## ADR-006 — Monorepo: base de datos y backend en el mismo repositorio
+
+- **Fecha:** 2026-10-09
+- **Contexto:** El backend vivía en otro repositorio y se programó contra la
+  propuesta original (tablas `archivo` y `dataset_valor`), no contra el diseño
+  final de ADR-001. Al estar separados, nada avisó del desfase. Además, ese
+  repositorio tenía el `.env` con contraseñas subido a Git.
+- **Decisión:** Mover el backend a `backend/` dentro de este repositorio, **sin
+  su historial** (para no arrastrar los secretos). Un solo `.env` en la raíz.
+  Una CI en GitHub Actions comprueba en cada push que migraciones, `schema.sql`,
+  catálogo y backend sigan alineados, usando un MySQL real.
+- **Consecuencias:** Un cambio de base y su código van en el mismo commit. El
+  historial previo del backend queda en el repositorio viejo (a archivar). El
+  frontend debería vivir también aquí, en `frontend/`.
+
+## ADR-007 — Migraciones aplicadas con `npm run migrate`
+
+- **Fecha:** 2026-10-09
+- **Contexto:** Aplicar migraciones a mano obliga a recordar cuáles ya se
+  corrieron. `schema.sql` no creaba `_migraciones`, así que una base levantada
+  con él no podía recibir migraciones nuevas.
+- **Decisión:** `backend/scripts/migrate.js` aplica en orden las migraciones que
+  no estén en `_migraciones`. `schema.sql` crea `_migraciones` y registra las
+  migraciones que ya incluye. Para bases antiguas existe `--baseline`.
+- **Consecuencias:** Los CREATE/ALTER de MySQL no se pueden deshacer: si una
+  migración falla a la mitad hay que revisar a mano. Las migraciones no pueden
+  usar `DELIMITER`.
+
+## ADR-008 — Convenciones estadísticas del backend
+
+- **Fecha:** 2026-10-09
+- **Contexto:** Hay varias formas válidas de calcular algunos estadísticos, y
+  distintos programas dan resultados distintos; para enseñar hay que elegir una
+  y explicarla.
+- **Decisión:**
+  - Varianza y desviación estándar **muestrales (n − 1)** por defecto, igual que
+    el catálogo; la poblacional (n) es una opción explícita.
+  - Cuartiles, deciles y percentiles por la posición **k(n + 1)/partes**, con
+    interpolación lineal; si la posición cae fuera de los datos se usa el extremo.
+  - Atípicos con la regla de Tukey (1.5 × RIQ); los bigotes llegan al último
+    dato real dentro de las cercas.
+  - Número de clases por Sturges por defecto (también raíz de n y Scott).
+- **Consecuencias:** Los resultados pueden diferir un poco de Excel (que usa
+  otro método de cuartiles). El paso a paso explica el método usado.

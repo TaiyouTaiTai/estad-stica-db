@@ -13,6 +13,18 @@ CREATE DATABASE IF NOT EXISTS estadistica_app
 USE estadistica_app;
 
 -- ============================================================
+-- Control de migraciones
+-- Este archivo equivale a aplicar TODAS las migraciones listadas al final;
+-- así `npm run migrate` sabe que no debe volver a ejecutarlas.
+-- ============================================================
+
+CREATE TABLE _migraciones (
+  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  archivo     VARCHAR(120) NOT NULL UNIQUE,
+  aplicada_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
 -- Usuarios y matriz de datos
 -- ============================================================
 
@@ -144,3 +156,10 @@ CREATE TABLE grafica (
   creada_en    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (analisis_id) REFERENCES analisis(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- Migraciones que este esquema ya incluye (agrega una línea por cada nueva)
+-- ============================================================
+
+INSERT INTO _migraciones (archivo) VALUES
+  ('001_init.sql');

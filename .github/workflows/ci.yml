@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend-y-db:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: estadistica_ci # distinta de la de schema.sql para poder compararlas
+      JWT_SECRET: solo-para-ci-no-usar-en-produccion-0123456789
+      INTEGRACION: '1'
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - run: npm ci
+
+      - name: Migraciones (dos veces, la segunda no debe hacer nada)
+        run: |
+          npm run migrate
+          npm run migrate
+
+      - name: Seed del catálogo (dos veces, no debe duplicar)
+        run: |
+          npm run seed
+          npm run seed
+
+      - name: Pruebas (unitarias + integración contra MySQL)
+        run: npm test
+
+      - name: schema.sql y las migraciones generan la misma estructura
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot < ../db/schema.sql
+          estructura() {
+            mysql -h 127.0.0.1 -uroot -proot -N -e "
+              SELECT table_name, column_name, column_type, is_nullable, IFNULL(column_default, 'NULL'), column_key, extra
+              FROM information_schema.columns WHERE table_schema = '$1'
+              ORDER BY table_name, ordinal_position"
+          }
+          estructura estadistica_app > /tmp/desde_schema.txt
+          estructura estadistica_ci  > /tmp/desde_migraciones.txt
+          diff -u /tmp/desde_migraciones.txt /tmp/desde_schema.txt \
+            || (echo "::error::db/schema.sql no coincide con db/migrations/. Actualiza schema.sql." && exit 1)

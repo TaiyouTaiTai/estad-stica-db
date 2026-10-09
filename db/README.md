@@ -23,34 +23,46 @@ Motor: **MySQL 8.0+** · Charset `utf8mb4` · Engine `InnoDB`
 
 ## Cómo levantar la DB desde cero
 
-Necesitas MySQL instalado y corriendo.
+Necesitas MySQL corriendo y el `.env` de la raíz del repo configurado.
 
-**Opción A — todo de un jalón (recomendada para empezar):**
+**Recomendado — con el script de migraciones:**
+```bash
+cd backend
+npm run migrate        # crea la base si no existe y aplica las migraciones pendientes
+npm run seed           # carga el contenido didáctico de seed/catalogo.json
+```
+
+**Alternativa — todo de un jalón con `schema.sql`:**
 ```bash
 mysql -u root -p < db/schema.sql
+cd backend && npm run seed
 ```
+`schema.sql` registra en `_migraciones` las migraciones que ya incluye, así que
+después `npm run migrate` solo aplicará las nuevas.
 
-**Opción B — aplicando migraciones en orden (refleja el flujo real):**
-```bash
-mysql -u root -p < db/migrations/001_init.sql
-# cuando existan más:
-# mysql -u root -p < db/migrations/002_*.sql
-```
+> **¿Tu base se creó con un `schema.sql` antiguo (sin la tabla `_migraciones`)?**
+> `npm run migrate` se detendrá para no romper nada. Si la base está al día, ejecuta
+> una sola vez `npm run migrate -- --baseline` para marcar las migraciones como aplicadas.
 
-Luego carga el contenido didáctico (cuando exista el script de seed en el backend):
-```bash
-node backend/scripts/seed.js
-```
+Para ver qué migraciones están aplicadas: `npm run migrate -- --estado`.
 
 ## Cómo hacer un cambio a la DB (flujo)
 
 1. Crea `db/migrations/002_descripcion_corta.sql` con el `ALTER`/`CREATE` nuevo.
-2. Al final de la migración: `INSERT INTO _migraciones (archivo) VALUES ('002_descripcion_corta.sql');`
-3. Aplícala en tu MySQL local y prueba.
-4. Actualiza `schema.sql` para que refleje el estado final.
-5. Commit: `git add db/ && git commit -m "db: agrega X"`.
+   - Nombre: tres dígitos + guion bajo + minúsculas (`002_agrega_unidad.sql`).
+   - No uses `DELIMITER` (triggers/procedimientos) ni `USE` de otra base.
+2. Aplícala: `cd backend && npm run migrate` (la registra en `_migraciones` sola).
+3. Actualiza `schema.sql` para que refleje el estado final **y agrega el nombre del
+   archivo al `INSERT INTO _migraciones` del final**.
+4. Si el cambio afecta al backend, cámbialo en el mismo commit.
+5. `cd backend && npm test`, y commit: `git commit -m "db: agrega X"`.
+
+La CI (`.github/workflows/ci.yml`) comprueba en cada push que:
+- las migraciones se aplican sobre una base vacía y repetirlas no hace nada;
+- `schema.sql` produce exactamente las mismas tablas y columnas que las migraciones;
+- el catálogo tiene una definición para cada estadístico que el backend calcula.
 
 ## Tabla de control `_migraciones`
 
-Registra qué migraciones ya se aplicaron (para no repetirlas). Se crea en la
-migración `001`.
+Registra qué migraciones ya se aplicaron (para no repetirlas). La crea la
+migración `001` (o `schema.sql`, o el propio `npm run migrate`).
